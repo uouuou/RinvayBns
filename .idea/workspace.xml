@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="ALL" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="5464528d-28bf-44b0-bcf9-5f85a1cb5295" name="更改" comment="">
+      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/bns.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/dbnavigator.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/bns.pid" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/buld.bat" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/config.ini" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/B.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/L.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/XD.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/XY.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/Y.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/YB.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/ZD.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/ZL.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/utils/check.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/utils/icon.ico" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/utils/ini.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/utils/os.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/utils/systray.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/utils/tools.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/utils/typeKeys.go" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="GOROOT" url="file://$USER_HOME$/go/go1.20.13" />
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="JsFlowSettings">
+    <service-enabled>true</service-enabled>
+    <exe-path />
+    <other-services-enabled>true</other-services-enabled>
+    <auto-save>true</auto-save>
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 2
+}</component>
+  <component name="ProjectId" id="2bZPhlz6pVEdQq6ZG6oUbJfs3XM" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Go 构建.go build bns.executor": "Run",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.go.formatter.settings.were.checked": "true",
+    "RunOnceActivity.go.migrated.go.modules.settings": "true",
+    "RunOnceActivity.go.modules.automatic.dependencies.download": "true",
+    "RunOnceActivity.go.modules.go.list.on.any.changes.was.set": "true",
+    "git-widget-placeholder": "master",
+    "go.import.settings.migrated": "true",
+    "go.sdk.automatically.set": "true",
+    "last_opened_file_path": "N:/GO/ShuHeBns",
+    "node.js.detected.package.eslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "project.propVCSSupport.DirectoryMappings",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="RunManager">
+    <configuration name="go build bns" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
+      <module name="bns" />
+      <working_directory value="$PROJECT_DIR$" />
+      <envs>
+        <env name="CGO_ENABLED" value="1" />
+      </envs>
+      <sudo value="true" />
+      <kind value="PACKAGE" />
+      <package value="bns" />
+      <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$/main.go" />
+      <output_directory value="$PROJECT_DIR$" />
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Go 构建.go build bns" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="应用程序级" UseSingleDictionary="true" transferred="true" />
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <ignored-roots>
+      <path value="$PROJECT_DIR$/.." />
+    </ignored-roots>
+  </component>
+  <component name="VgoProject">
+    <environment>
+      <map>
+        <entry key="CC" value="C:\mingw64\mingw32posixseh\bin\gcc.exe" />
+        <entry key="CXX" value="C:\mingw64\mingw32posixseh\bin\g++.exe" />
+        <entry key="GOPRIVATE" value="git.jsyxapp.com" />
+      </map>
+    </environment>
+    <settings-migrated>true</settings-migrated>
+  </component>
+</project>
