@@ -4,35 +4,10 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="5464528d-28bf-44b0-bcf9-5f85a1cb5295" name="更改" comment="">
-      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/bns.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/dbnavigator.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/bns.pid" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/buld.bat" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/config.ini" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/B.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/L.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/XD.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/XY.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/Y.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/YB.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/ZD.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/ZL.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/utils/check.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/utils/icon.ico" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/utils/ini.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/utils/os.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/utils/systray.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/utils/tools.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/utils/typeKeys.go" afterDir="false" />
+    <list default="true" id="5464528d-28bf-44b0-bcf9-5f85a1cb5295" name="更改" comment="优化一个分辨率算法，支持针对不同分辨率的不同数据做处理">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils/ini.go" beforeDir="false" afterPath="$PROJECT_DIR$/utils/ini.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils/typeKeys.go" beforeDir="false" afterPath="$PROJECT_DIR$/utils/typeKeys.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -73,11 +48,11 @@
     "git-widget-placeholder": "master",
     "go.import.settings.migrated": "true",
     "go.sdk.automatically.set": "true",
-    "last_opened_file_path": "N:/GO/ShuHeBns",
+    "last_opened_file_path": "E:/Go/ShuHeBns",
     "node.js.detected.package.eslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "project.propVCSSupport.DirectoryMappings",
+    "settings.editor.selected.configurable": "go.vgo",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
@@ -102,6 +77,13 @@
       </list>
     </recent_temporary>
   </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-gosdk-e58f7cfedaf7-155fe4b6e3a0-org.jetbrains.plugins.go.sharedIndexes.bundled-GO-233.14015.113" />
+      </set>
+    </attachedChunks>
+  </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="应用程序级" UseSingleDictionary="true" transferred="true" />
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
@@ -110,12 +92,12 @@
     <ignored-roots>
       <path value="$PROJECT_DIR$/.." />
     </ignored-roots>
+    <MESSAGE value="优化一个分辨率算法，支持针对不同分辨率的不同数据做处理" />
+    <option name="LAST_COMMIT_MESSAGE" value="优化一个分辨率算法，支持针对不同分辨率的不同数据做处理" />
   </component>
   <component name="VgoProject">
     <environment>
       <map>
-        <entry key="CC" value="C:\mingw64\mingw32posixseh\bin\gcc.exe" />
-        <entry key="CXX" value="C:\mingw64\mingw32posixseh\bin\g++.exe" />
         <entry key="GOPRIVATE" value="git.jsyxapp.com" />
       </map>
     </environment>

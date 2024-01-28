@@ -16,6 +16,7 @@ var BTime int         //按键延迟时间
 var IsColor bool      //是否开启取色
 var IsCheckKey bool   //是否开启检测按键
 var Tolerance float64 //容差值
+var Scale float64     //缩放值
 
 // ReadIni 读取配置文件
 func ReadIni() {
@@ -26,11 +27,15 @@ func ReadIni() {
 	RawCode, _ = cfg.Section("快捷键").Key("快捷键值").Int()
 	IsMos, _ = cfg.Section("快捷键").Key("使用鼠标").Bool()
 	Tolerance, _ = cfg.Section("快捷键").Key("容差值").Float64()
+	Scale, _ = cfg.Section("快捷键").Key("缩放值").Float64()
 	BTime, _ = cfg.Section("快捷键").Key("按键延时").Int()
 	T = cfg.Section("快捷键").Key("刺心按键").String()
 	F = cfg.Section("快捷键").Key("雷电杀按键").String()
 	if Tolerance == 0 {
 		Tolerance = 0.08
+	}
+	if Scale == 0 {
+		Scale = 1
 	}
 }
 

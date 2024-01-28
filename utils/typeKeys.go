@@ -72,7 +72,7 @@ func typeKeys(status *bool) {
 		num++
 		log.Println("num:", num)
 		x, y, w, h := robotgo.GetBounds(robotgo.GetPid())
-		bit := robotgo.CaptureScreen(x+w/3, y+h/3*2, w/3, h/3)
+		bit := robotgo.CaptureScreen(int(float64(x)*Scale+float64(w)*Scale/3), int(float64(y)*Scale+float64(h)*Scale)/3*2, int(float64(w)*Scale)/3, int(float64(h)*Scale)/3)
 		wg.Add(7)
 		NewRoutineArgs(func(args ...any) {
 			defer wg.Done()
