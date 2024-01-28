@@ -58,14 +58,18 @@ func NewCheck() {
 		if ev.Kind == hook.MouseHold && ev.Button == uint16(RawCode) && IsMos {
 			if !start {
 				log.Println("Starting typing...")
-				go typeKeys(&start)
+				NewRoutine(func() {
+					typeKeys(&start)
+				})
 				start = true
 			}
 		}
 		if ev.Kind == hook.KeyDown && ev.Rawcode == uint16(RawCode) && !IsMos {
 			if !start {
 				log.Println("Starting typing...")
-				go typeKeys(&start)
+				NewRoutine(func() {
+					typeKeys(&start)
+				})
 				start = true
 			}
 		}
@@ -96,6 +100,8 @@ func NewCheck() {
 		if ev.Kind == hook.MouseDown && ev.Button == 4 {
 			start := time.Now()
 			x, y, w, h := robotgo.GetBounds(robotgo.GetPid())
+			bit := robotgo.CaptureScreen(x+w/3, y+h/3*2, w/3, h/3)
+			fmt.Println(x+w/3, y+h/3*2, w/3, h/3)
 			fmt.Println(robotgo.GetPid())
 			//x, y, w, h = robotgo.GetDisplayBounds(0)
 			fmt.Println(robotgo.GetScaleSize(0))
@@ -106,7 +112,6 @@ func NewCheck() {
 			//	log.Println("获取屏幕信息失败")
 			//	continue
 			//}
-			bit := robotgo.CaptureScreen(x, y, w, h)
 			FindBit := robotgo.ToCBitmap(robotgo.ImgToBitmap(LJ))
 			fx, fy := bitmap.Find(FindBit, bit)
 			if fx != -1 && fy != -1 {

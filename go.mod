@@ -7,7 +7,6 @@ require (
 	github.com/go-vgo/robotgo v1.0.0-rc2.1
 	github.com/robotn/gohook v0.41.0
 	github.com/vcaesar/bitmap v0.10.0-beta3.2
-	github.com/vcaesar/gcv v0.40.5
 	golang.org/x/sys v0.16.0
 	gopkg.in/ini.v1 v1.67.0
 )
@@ -15,7 +14,6 @@ require (
 require (
 	github.com/gen2brain/shm v0.1.0 // indirect
 	github.com/go-ole/go-ole v1.3.0 // indirect
-	github.com/go-vgo/gt v0.31.0 // indirect
 	github.com/godbus/dbus/v5 v5.1.0 // indirect
 	github.com/jezek/xgb v1.1.1 // indirect
 	github.com/kbinani/screenshot v0.0.0-20230812210009-b87d31814237 // indirect
@@ -35,7 +33,6 @@ require (
 	github.com/vcaesar/keycode v0.10.1 // indirect
 	github.com/vcaesar/tt v0.20.0 // indirect
 	github.com/yusufpapurcu/wmi v1.2.3 // indirect
-	gocv.io/x/gocv v0.30.0 // indirect
 	golang.org/x/image v0.15.0 // indirect
 	golang.org/x/net v0.20.0 // indirect
 )

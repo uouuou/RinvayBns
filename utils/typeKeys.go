@@ -1,7 +1,6 @@
 package utils
 
 import (
-	"fmt"
 	"github.com/go-vgo/robotgo"
 	"github.com/vcaesar/bitmap"
 	"log"
@@ -34,9 +33,7 @@ func (b *AtomicBool) AfterFalse(duration time.Duration) {
 	// 计时器到期后自动将 AtomicBool 的值重置为 false
 	time.AfterFunc(duration, func() {
 		b.Set(false)
-		fmt.Println("Timer expired. Value is now:", b.Get())
 	})
-	fmt.Printf("Timer set for %v seconds. Value is now: %v\n", duration.Seconds(), b.Get())
 }
 
 // typeKeys 模拟键盘输入
@@ -64,6 +61,7 @@ func typeKeys(status *bool) {
 		isZL    AtomicBool
 		isSc    AtomicBool
 		isSS    AtomicBool
+		isGl    AtomicBool
 		num     int
 	)
 	var wg sync.WaitGroup
@@ -71,11 +69,10 @@ func typeKeys(status *bool) {
 		if !*status {
 			return
 		}
-		start := time.Now()
 		num++
 		log.Println("num:", num)
 		x, y, w, h := robotgo.GetBounds(robotgo.GetPid())
-		bit := robotgo.CaptureScreen(x, y, w, h)
+		bit := robotgo.CaptureScreen(x+w/3, y+h/3*2, w/3, h/3)
 		wg.Add(7)
 		NewRoutineArgs(func(args ...any) {
 			defer wg.Done()
@@ -178,29 +175,34 @@ func typeKeys(status *bool) {
 			log.Printf("吸影检测：%v\n", end.Sub(start))
 		}, bit)
 		wg.Wait()
-		end := time.Now()
-		log.Printf("所有检测耗时：%v\n", end.Sub(start))
+		if isYs.Get() && !isGl.Get() {
+			robotgo.MilliSleep(BTime)
+			_ = robotgo.KeyTap(robotgo.Key2)
+			log.Println("挂雷成功")
+			isGl.AfterFalse(time.Second * 20)
+		}
 		if !isBosZd.Get() {
-			if isZD.Get() {
+			if isZD.Get() && !isBosZd.Get() {
+				robotgo.MilliSleep(BTime)
 				_ = robotgo.KeyTap(robotgo.Key4)
 				isZD.Set(false)
 				isBosZd.AfterFalse(time.Second * 9)
 				log.Println("掷毒启动ForBit")
-				robotgo.MilliSleep(BTime)
 			}
-			if isZL.Get() {
+			if isZL.Get() && !isBosZd.Get() {
+				robotgo.MilliSleep(BTime)
 				_ = robotgo.KeyTap(robotgo.KeyZ)
 				isZL.Set(false)
 				isBosZd.AfterFalse(time.Second * 9)
 				log.Println("掷毒雷启动ForBit")
-				robotgo.MilliSleep(BTime)
+
 			}
-			if isYB.Get() {
+			if isYB.Get() && !isBosZd.Get() {
+				robotgo.MilliSleep(BTime)
 				_ = robotgo.KeyTap(robotgo.KeyX)
 				isYB.Set(false)
 				isBosZd.AfterFalse(time.Second * 9)
 				log.Println("影匕启动ForBit")
-				robotgo.MilliSleep(BTime)
 			}
 		}
 		if !isYs.Get() && isXY.Get() {
@@ -209,14 +211,14 @@ func typeKeys(status *bool) {
 			isXY.Set(false)
 			robotgo.MilliSleep(BTime)
 		}
-		if !isYs.Get() && !isXY.Get() && isSc.Get() {
-			isSS.Set(true)
+		if !isYs.Get() && !isXY.Get() && isSc.Get() && !isSS.Get() {
+			isSS.AfterFalse(8 * time.Second)
 			_ = robotgo.KeyTap(robotgo.KeyS)
 			robotgo.MilliSleep(30)
 			_ = robotgo.KeyTap(robotgo.KeyS)
-			robotgo.MilliSleep(120)
+			robotgo.MilliSleep(50)
 			_ = robotgo.KeyTap(robotgo.Key1)
-			log.Println("隐身成功")
+			log.Println("SS1执行成功")
 			robotgo.MilliSleep(BTime)
 		}
 		if isLj.Get() {
