@@ -7,6 +7,7 @@ import (
 	"github.com/vcaesar/bitmap"
 	"image"
 	"log"
+	"strconv"
 	"time"
 )
 
@@ -100,10 +101,18 @@ func NewCheck() {
 		if ev.Kind == hook.MouseDown && ev.Button == 4 {
 			start := time.Now()
 			x, y, w, h := robotgo.GetBounds(robotgo.GetPid())
-			bit := robotgo.CaptureScreen(x+w/3, y+h/3*2, w/3, h/3)
-			fmt.Println(x+w/3, y+h/3*2, w/3, h/3)
+			_, _, ww, wh := robotgo.GetDisplayBounds(0)
+			ws, hs := robotgo.GetScaleSize(0)
+			fmt.Println(ww, wh)
+			fmt.Println(robotgo.GetDisplayBounds(0))
+			value, _ := strconv.ParseFloat(fmt.Sprintf("%.1f", float64(ww)/float64(ws)), 64)
+			fmt.Println(value)
+			value, _ = strconv.ParseFloat(fmt.Sprintf("%.1f", float64(wh)/float64(hs)), 64)
+			fmt.Println(value)
+			bit := robotgo.CaptureScreen(int(float64(x)*value+float64(w)*value/3), int(float64(y)*value+float64(h)*value/3*2), int(float64(w)*value/3), int(float64(h)*value/3))
+			fmt.Println(int(float64(x)*value), int(float64(y)*value), int(float64(w)*value), int(float64(h)*value))
+			fmt.Println(int(float64(x)*value+float64(w)*value/3), int(float64(y)*value+float64(h)*value/3*2), int(float64(w)*value/3), int(float64(h)*value/3))
 			fmt.Println(robotgo.GetPid())
-			//x, y, w, h = robotgo.GetDisplayBounds(0)
 			fmt.Println(robotgo.GetScaleSize(0))
 			fmt.Println(robotgo.ScaleF(0))
 			fmt.Println(robotgo.SysScale())
