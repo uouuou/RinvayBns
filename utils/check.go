@@ -5,46 +5,51 @@ import (
 	"github.com/go-vgo/robotgo"
 	hook "github.com/robotn/gohook"
 	"github.com/vcaesar/bitmap"
+	"image"
 	"log"
+	"os"
 	"strconv"
 	"time"
 )
 
-var LJ robotgo.CBitmap     //雷决
-var YsTime robotgo.CBitmap //隐身条
-var B robotgo.CBitmap      //背刺
-var XD robotgo.CBitmap     //毒镖
-var XY robotgo.CBitmap     //吸影
-var YB robotgo.CBitmap     //影匕
-var ZD robotgo.CBitmap     //掷毒
-var ZL robotgo.CBitmap     //掷毒雷
+var LJ image.Image     //雷决
+var YsTime image.Image //隐身条
+var B image.Image      //背刺
+var XD image.Image     //毒镖
+var XY image.Image     //吸影
+var YB image.Image     //影匕
+var ZD image.Image     //掷毒
+var ZL image.Image     //掷毒雷
+var BosZd image.Image  //BOS中毒
 
 // init 初始化取色图片
 func init() {
-	Bb, _ := robotgo.OpenImg("./static/B.png")
-	Lb, _ := robotgo.OpenImg("./static/L.png")
-	XDb, _ := robotgo.OpenImg("./static/XD.png")
-	Yb, _ := robotgo.OpenImg("./static/Y.png")
-	XYb, _ := robotgo.OpenImg("./static/XY.png")
-	YBb, _ := robotgo.OpenImg("./static/YB.png")
-	ZDb, _ := robotgo.OpenImg("./static/ZD.png")
-	ZLb, _ := robotgo.OpenImg("./static/ZL.png")
-	lj, _ := robotgo.ByteToImg(Lb)
-	LJ = robotgo.ImgToCBitmap(lj)
-	ysTime, _ := robotgo.ByteToImg(Yb)
-	YsTime = robotgo.ImgToCBitmap(ysTime)
-	b, _ := robotgo.ByteToImg(Bb)
-	B = robotgo.ImgToCBitmap(b)
-	xd, _ := robotgo.ByteToImg(XDb)
-	XD = robotgo.ImgToCBitmap(xd)
-	xy, _ := robotgo.ByteToImg(XYb)
-	XY = robotgo.ImgToCBitmap(xy)
-	yb, _ := robotgo.ByteToImg(YBb)
-	YB = robotgo.ImgToCBitmap(yb)
-	zd, _ := robotgo.ByteToImg(ZDb)
-	ZD = robotgo.ImgToCBitmap(zd)
-	zl, _ := robotgo.ByteToImg(ZLb)
-	ZL = robotgo.ImgToCBitmap(zl)
+	B = loadImage("./static/B.png")
+	LJ = loadImage("./static/L.png")
+	XD = loadImage("./static/XD.png")
+	YsTime = loadImage("./static/Y.png")
+	XY = loadImage("./static/XY.png")
+	YB = loadImage("./static/YB.png")
+	ZD = loadImage("./static/ZD.png")
+	ZL = loadImage("./static/ZL.png")
+	BosZd = loadImage("./static/BosZd.png")
+}
+
+// loadImage 读取图片
+func loadImage(imgPath string) image.Image {
+	imageFile, err := os.Open(imgPath)
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+	defer func(imageFile *os.File) {
+		err := imageFile.Close()
+		if err != nil {
+			return
+		}
+	}(imageFile)
+	img, _, _ := image.Decode(imageFile)
+	return img
 }
 
 // NewCheck 监听鼠标/键盘事件
@@ -61,8 +66,11 @@ func NewCheck() {
 	fileMap[4] = "BosZd"
 	fileMap[5] = "XD"
 	fileMap[6] = "XY"
-
+	fileMap[7] = "YB"
+	fileMap[8] = "ZD"
+	fileMap[9] = "ZL"
 	for ev := range evChan {
+
 		if ev.Kind == hook.MouseHold && ev.Button == uint16(RawCode) && IsMos {
 			if !start {
 				log.Println("Starting typing...")
@@ -124,7 +132,7 @@ func NewCheck() {
 			fmt.Println(value)
 			value, _ = strconv.ParseFloat(fmt.Sprintf("%.1f", float64(wh)/float64(hs)), 64)
 			fmt.Println(value)
-			bit := robotgo.CaptureScreen(int(float64(x)*value+float64(w)*value/3), int(float64(y)*value+float64(h)*value/3*2), int(float64(w)*value/3), int(float64(h)*value/3))
+			bit := robotgo.CaptureScreen(int(float64(x)*Scale+float64(w)*Scale/3), int(float64(y)*Scale+float64(h)*Scale)/3*2, int(float64(w)*Scale)/3, int(float64(h)*Scale)/3)
 			fmt.Println(int(float64(x)*value), int(float64(y)*value), int(float64(w)*value), int(float64(h)*value))
 			fmt.Println(int(float64(x)*value+float64(w)*value/3), int(float64(y)*value+float64(h)*value/3*2), int(float64(w)*value/3), int(float64(h)*value/3))
 			fmt.Println(robotgo.GetPid())
@@ -141,7 +149,7 @@ func NewCheck() {
 				log.Println("LJ is nil")
 				continue
 			}
-			fx, fy := bitmap.Find(LJ, bit)
+			fx, fy := bitmap.Find(robotgo.ImgToCBitmap(LJ), bit)
 			if fx != -1 && fy != -1 {
 				_ = robotgo.KeyTap(robotgo.Key4)
 			}

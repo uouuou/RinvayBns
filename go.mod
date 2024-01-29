@@ -3,6 +3,7 @@ module bns
 go 1.22
 
 require (
+	github.com/deluan/lookup v0.0.7
 	github.com/energye/systray v1.0.2
 	github.com/go-vgo/robotgo v1.0.0-rc2.1
 	github.com/robotn/gohook v0.41.0
