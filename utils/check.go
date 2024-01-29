@@ -5,20 +5,19 @@ import (
 	"github.com/go-vgo/robotgo"
 	hook "github.com/robotn/gohook"
 	"github.com/vcaesar/bitmap"
-	"image"
 	"log"
 	"strconv"
 	"time"
 )
 
-var LJ image.Image     //雷决
-var YsTime image.Image //隐身条
-var B image.Image      //背刺
-var XD image.Image     //毒镖
-var XY image.Image     //吸影
-var YB image.Image     //影匕
-var ZD image.Image     //掷毒
-var ZL image.Image     //掷毒雷
+var LJ robotgo.CBitmap     //雷决
+var YsTime robotgo.CBitmap //隐身条
+var B robotgo.CBitmap      //背刺
+var XD robotgo.CBitmap     //毒镖
+var XY robotgo.CBitmap     //吸影
+var YB robotgo.CBitmap     //影匕
+var ZD robotgo.CBitmap     //掷毒
+var ZL robotgo.CBitmap     //掷毒雷
 
 // init 初始化取色图片
 func init() {
@@ -30,14 +29,22 @@ func init() {
 	YBb, _ := robotgo.OpenImg("./static/YB.png")
 	ZDb, _ := robotgo.OpenImg("./static/ZD.png")
 	ZLb, _ := robotgo.OpenImg("./static/ZL.png")
-	LJ, _ = robotgo.ByteToImg(Lb)
-	YsTime, _ = robotgo.ByteToImg(Yb)
-	B, _ = robotgo.ByteToImg(Bb)
-	XD, _ = robotgo.ByteToImg(XDb)
-	XY, _ = robotgo.ByteToImg(XYb)
-	YB, _ = robotgo.ByteToImg(YBb)
-	ZD, _ = robotgo.ByteToImg(ZDb)
-	ZL, _ = robotgo.ByteToImg(ZLb)
+	lj, _ := robotgo.ByteToImg(Lb)
+	LJ = robotgo.ImgToCBitmap(lj)
+	ysTime, _ := robotgo.ByteToImg(Yb)
+	YsTime = robotgo.ImgToCBitmap(ysTime)
+	b, _ := robotgo.ByteToImg(Bb)
+	B = robotgo.ImgToCBitmap(b)
+	xd, _ := robotgo.ByteToImg(XDb)
+	XD = robotgo.ImgToCBitmap(xd)
+	xy, _ := robotgo.ByteToImg(XYb)
+	XY = robotgo.ImgToCBitmap(xy)
+	yb, _ := robotgo.ByteToImg(YBb)
+	YB = robotgo.ImgToCBitmap(yb)
+	zd, _ := robotgo.ByteToImg(ZDb)
+	ZD = robotgo.ImgToCBitmap(zd)
+	zl, _ := robotgo.ByteToImg(ZLb)
+	ZL = robotgo.ImgToCBitmap(zl)
 }
 
 // NewCheck 监听鼠标/键盘事件
@@ -104,6 +111,14 @@ func NewCheck() {
 			_, _, ww, wh := robotgo.GetDisplayBounds(0)
 			ws, hs := robotgo.GetScaleSize(0)
 			fmt.Println(ww, wh)
+			if ww == 0 || wh == 0 {
+				log.Println("获取屏幕信息失败")
+				continue
+			}
+			if w == 0 || h == 0 {
+				log.Println("应用基础数据获取异常......")
+				continue
+			}
 			fmt.Println(robotgo.GetDisplayBounds(0))
 			value, _ := strconv.ParseFloat(fmt.Sprintf("%.1f", float64(ww)/float64(ws)), 64)
 			fmt.Println(value)
@@ -121,8 +136,12 @@ func NewCheck() {
 			//	log.Println("获取屏幕信息失败")
 			//	continue
 			//}
-			FindBit := robotgo.ToCBitmap(robotgo.ImgToBitmap(LJ))
-			fx, fy := bitmap.Find(FindBit, bit)
+			fmt.Println(bit)
+			if LJ == nil {
+				log.Println("LJ is nil")
+				continue
+			}
+			fx, fy := bitmap.Find(LJ, bit)
 			if fx != -1 && fy != -1 {
 				_ = robotgo.KeyTap(robotgo.Key4)
 			}
@@ -138,6 +157,7 @@ func NewCheck() {
 			bit := robotgo.CaptureScreen(x-15, y-15, 30, 30)
 			Jt := robotgo.ToImage(bit)
 			_ = robotgo.Save(Jt, fileMap[colorNum]+".png")
+
 			robotgo.FreeBitmap(bit)
 			ShowMessage("BNS", "取图片成功")
 		}

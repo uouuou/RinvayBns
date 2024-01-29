@@ -24,13 +24,13 @@ func ReadIni() {
 	if err != nil {
 		log.Fatal("Fail to read file: ", err)
 	}
-	RawCode, _ = cfg.Section("快捷键").Key("快捷键值").Int()
-	IsMos, _ = cfg.Section("快捷键").Key("使用鼠标").Bool()
-	Tolerance, _ = cfg.Section("快捷键").Key("容差值").Float64()
-	Scale, _ = cfg.Section("快捷键").Key("缩放值").Float64()
-	BTime, _ = cfg.Section("快捷键").Key("按键延时").Int()
-	T = cfg.Section("快捷键").Key("刺心按键").String()
-	F = cfg.Section("快捷键").Key("雷电杀按键").String()
+	RawCode, _ = cfg.Section("系统设置").Key("快捷键值").Int()
+	IsMos, _ = cfg.Section("系统设置").Key("使用鼠标").Bool()
+	Tolerance, _ = cfg.Section("系统设置").Key("容差值").Float64()
+	Scale, _ = cfg.Section("系统设置").Key("缩放值").Float64()
+	BTime, _ = cfg.Section("系统设置").Key("按键延时").Int()
+	T = cfg.Section("系统设置").Key("刺心按键").String()
+	F = cfg.Section("系统设置").Key("雷电杀按键").String()
 	if Tolerance == 0 {
 		Tolerance = 0.08
 	}

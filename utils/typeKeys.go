@@ -9,6 +9,33 @@ import (
 	"time"
 )
 
+// BnsKey 按键信息
+type BnsKey struct {
+	status bool
+	key    string
+	time   time.Duration
+}
+
+// NewBnsKey 创建一个 BnsKey
+func NewBnsKey(key string, time time.Duration) *BnsKey {
+	return &BnsKey{key: key, time: time}
+}
+
+// Down 按下 BnsKey
+func (b *BnsKey) Down() {
+	_ = robotgo.KeyTap(b.key)
+	b.status = true
+	// 计时器到期后自动将 AtomicBool 的值重置为 false
+	time.AfterFunc(b.time, func() {
+		b.status = false
+	})
+}
+
+// Up 提前释放 BnsKey 的倒计时
+func (b *BnsKey) Up() {
+	b.status = false
+}
+
 // AtomicBool 原子布尔值
 type AtomicBool struct {
 	val int32
@@ -62,6 +89,7 @@ func typeKeys(status *bool) {
 		isSc    AtomicBool
 		isSS    AtomicBool
 		isGl    AtomicBool
+		isBc    AtomicBool
 		num     int
 	)
 	var wg sync.WaitGroup
@@ -72,13 +100,20 @@ func typeKeys(status *bool) {
 		num++
 		log.Println("num:", num)
 		x, y, w, h := robotgo.GetBounds(robotgo.GetPid())
+		if w == 0 || h == 0 {
+			log.Println("应用基础数据获取异常......")
+			continue
+		}
 		bit := robotgo.CaptureScreen(int(float64(x)*Scale+float64(w)*Scale/3), int(float64(y)*Scale+float64(h)*Scale)/3*2, int(float64(w)*Scale)/3, int(float64(h)*Scale)/3)
+		if bit == nil {
+			log.Println("截图失败，跳过本次循环......")
+			continue
+		}
 		wg.Add(7)
 		NewRoutineArgs(func(args ...any) {
 			defer wg.Done()
 			start := time.Now()
-			FindBit := robotgo.ToCBitmap(robotgo.ImgToBitmap(LJ))
-			fx, fy := bitmap.Find(FindBit, args[0].(robotgo.CBitmap), Tolerance)
+			fx, fy := bitmap.Find(LJ, args[0].(robotgo.CBitmap), Tolerance)
 			if fx != -1 && fy != -1 {
 				isLj.Set(true)
 				log.Println("雷决启动ForBit")
@@ -91,8 +126,7 @@ func typeKeys(status *bool) {
 		NewRoutineArgs(func(args ...any) {
 			defer wg.Done()
 			start := time.Now()
-			FindBit := robotgo.ToCBitmap(robotgo.ImgToBitmap(YB))
-			fx, fy := bitmap.Find(FindBit, args[0].(robotgo.CBitmap), Tolerance)
+			fx, fy := bitmap.Find(YB, args[0].(robotgo.CBitmap), Tolerance)
 			if fx != -1 && fy != -1 {
 				isYB.Set(true)
 				log.Println("可以影匕ForBit")
@@ -105,8 +139,7 @@ func typeKeys(status *bool) {
 		NewRoutineArgs(func(args ...any) {
 			defer wg.Done()
 			start := time.Now()
-			FindBit := robotgo.ToCBitmap(robotgo.ImgToBitmap(ZD))
-			fx, fy := bitmap.Find(FindBit, args[0].(robotgo.CBitmap), Tolerance)
+			fx, fy := bitmap.Find(ZD, args[0].(robotgo.CBitmap), Tolerance)
 			if fx != -1 && fy != -1 {
 				isZD.Set(true)
 				log.Println("可以掷毒ForBit")
@@ -119,8 +152,7 @@ func typeKeys(status *bool) {
 		NewRoutineArgs(func(args ...any) {
 			defer wg.Done()
 			start := time.Now()
-			FindBit := robotgo.ToCBitmap(robotgo.ImgToBitmap(ZL))
-			fx, fy := bitmap.Find(FindBit, args[0].(robotgo.CBitmap), Tolerance)
+			fx, fy := bitmap.Find(ZL, args[0].(robotgo.CBitmap), Tolerance)
 			if fx != -1 && fy != -1 {
 				isZL.Set(true)
 				log.Println("可以掷毒雷ForBit")
@@ -133,8 +165,7 @@ func typeKeys(status *bool) {
 		NewRoutineArgs(func(args ...any) {
 			defer wg.Done()
 			start := time.Now()
-			FindBit := robotgo.ToCBitmap(robotgo.ImgToBitmap(YsTime))
-			fx, fy := bitmap.Find(FindBit, args[0].(robotgo.CBitmap), Tolerance)
+			fx, fy := bitmap.Find(YsTime, args[0].(robotgo.CBitmap), Tolerance)
 			if !isYs.Get() && fx != -1 && fy != -1 {
 				isYs.Set(true)
 				log.Println("开始隐身")
@@ -149,8 +180,7 @@ func typeKeys(status *bool) {
 		NewRoutineArgs(func(args ...any) {
 			defer wg.Done()
 			start := time.Now()
-			FindBit := robotgo.ToCBitmap(robotgo.ImgToBitmap(XD))
-			fx, fy := bitmap.Find(FindBit, args[0].(robotgo.CBitmap), Tolerance)
+			fx, fy := bitmap.Find(XD, args[0].(robotgo.CBitmap), Tolerance)
 			if fx != -1 && fy != -1 {
 				isXd.Set(true)
 				log.Println("检测到毒镖可使用")
@@ -163,8 +193,7 @@ func typeKeys(status *bool) {
 		NewRoutineArgs(func(args ...any) {
 			defer wg.Done()
 			start := time.Now()
-			FindBitXY := robotgo.ToCBitmap(robotgo.ImgToBitmap(XY))
-			fx, fy := bitmap.Find(FindBitXY, args[0].(robotgo.CBitmap), Tolerance)
+			fx, fy := bitmap.Find(XY, args[0].(robotgo.CBitmap), Tolerance)
 			if fx != -1 && fy != -1 {
 				isXY.Set(true)
 				log.Println("检测到吸影可使用")
@@ -180,6 +209,15 @@ func typeKeys(status *bool) {
 			_ = robotgo.KeyTap(robotgo.Key2)
 			log.Println("挂雷成功")
 			isGl.AfterFalse(time.Second * 20)
+		}
+		if isYs.Get() {
+			isBc.AfterFalse(time.Second * 5)
+		}
+		if !isBc.Get() && isYs.Get() {
+			robotgo.MilliSleep(BTime)
+			_ = robotgo.KeyTap(robotgo.KeyR)
+			log.Println("背刺成功")
+			isBc.Set(false)
 		}
 		if !isBosZd.Get() {
 			if isZD.Get() && !isBosZd.Get() {
@@ -233,27 +271,24 @@ func typeKeys(status *bool) {
 			log.Println("毒镖启动")
 			robotgo.MilliSleep(BTime)
 		}
-		if isYs.Get() {
-			start := time.Now()
-			FindBit := robotgo.ToCBitmap(robotgo.ImgToBitmap(B))
-			fx, fy := bitmap.Find(FindBit, bit, Tolerance)
-			FindBitXY := robotgo.ToCBitmap(robotgo.ImgToBitmap(XY))
-			fxx, fyx := bitmap.Find(FindBitXY, bit, Tolerance)
-			if fx != -1 && fy != -1 && fxx == -1 && fyx == -1 {
-				_ = robotgo.KeyTap(robotgo.KeyR)
-				isSc.Set(true)
-				log.Println("背刺启动ForBit")
-				robotgo.MilliSleep(BTime)
-			}
-			end := time.Now()
-			log.Printf("背刺检测：%v\n", end.Sub(start))
-		}
+		//if isYs.Get() {
+		//	start := time.Now()
+		//	fx, fy := bitmap.Find(B, bit, Tolerance)
+		//	fxx, fyx := bitmap.Find(XY, bit, Tolerance)
+		//	if fx != -1 && fy != -1 && fxx == -1 && fyx == -1 {
+		//		_ = robotgo.KeyTap(robotgo.KeyR)
+		//		isSc.Set(true)
+		//		log.Println("背刺启动ForBit")
+		//		robotgo.MilliSleep(BTime)
+		//	}
+		//	end := time.Now()
+		//	log.Printf("背刺检测：%v\n", end.Sub(start))
+		//}
 		if !isSS.Get() {
 			log.Printf("SS未启动，正常输出:%v\n", num)
-			_ = robotgo.KeyTap(T)
+			robotgo.Click("right")
 			robotgo.MilliSleep(BTime)
 			_ = robotgo.KeyTap(F)
-			robotgo.MilliSleep(BTime)
 		} else {
 			log.Printf("SS启动，不输出:%v\n", num)
 			isSS.Set(false)

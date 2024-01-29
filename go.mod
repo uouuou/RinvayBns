@@ -1,6 +1,6 @@
 module bns
 
-go 1.20
+go 1.22
 
 require (
 	github.com/energye/systray v1.0.2
