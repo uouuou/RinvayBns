@@ -1,6 +1,6 @@
 module bns
 
-go 1.22
+go 1.22rc2
 
 require (
 	github.com/deluan/lookup v0.0.7

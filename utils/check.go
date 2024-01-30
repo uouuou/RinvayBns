@@ -9,6 +9,7 @@ import (
 	"log"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -39,7 +40,10 @@ func init() {
 func loadImage(imgPath string) image.Image {
 	imageFile, err := os.Open(imgPath)
 	if err != nil {
-		fmt.Println(err)
+		imgPaths := strings.Split(imgPath, "/")
+		imageName := imgPaths[len(imgPaths)-1]
+		ShowMessage("图片读取失败", "请检查图片是否存在\n"+imageName)
+		robotgo.MilliSleep(3000)
 		os.Exit(1)
 	}
 	defer func(imageFile *os.File) {

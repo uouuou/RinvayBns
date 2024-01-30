@@ -9,31 +9,28 @@ import (
 	"time"
 )
 
-// BnsKey 按键信息
-type BnsKey struct {
-	status bool
-	key    string
-	time   time.Duration
+// KeyPresser 模拟键盘输入
+type KeyPresser struct {
+	mu sync.Mutex
 }
 
-// NewBnsKey 创建一个 BnsKey
-func NewBnsKey(key string, time time.Duration) *BnsKey {
-	return &BnsKey{key: key, time: time}
+// NewKeyPresser 创建一个 KeyPresser
+func NewKeyPresser() *KeyPresser {
+	return &KeyPresser{}
 }
 
-// Down 按下 BnsKey
-func (b *BnsKey) Down() {
-	_ = robotgo.KeyTap(b.key)
-	b.status = true
-	// 计时器到期后自动将 AtomicBool 的值重置为 false
-	time.AfterFunc(b.time, func() {
-		b.status = false
-	})
-}
-
-// Up 提前释放 BnsKey 的倒计时
-func (b *BnsKey) Up() {
-	b.status = false
+// KeyTap 模拟键盘输入
+func (k *KeyPresser) KeyTap(key string, sleep ...int) {
+	k.mu.Lock()
+	defer k.mu.Unlock()
+	_ = robotgo.KeyDown(key)
+	if sleep != nil && len(sleep) > 0 && sleep[0] > 0 {
+		log.Println("按键独立 sleep:", sleep[0])
+		robotgo.MilliSleep(sleep[0])
+	} else {
+		robotgo.MilliSleep(BTime)
+	}
+	_ = robotgo.KeyUp(key)
 }
 
 // AtomicBool 原子布尔值
@@ -86,19 +83,22 @@ func typeKeys(status *bool) {
 		isYB    AtomicBool
 		isZD    AtomicBool
 		isZL    AtomicBool
-		isSc    AtomicBool
-		isSS    AtomicBool
 		isGl    AtomicBool
-		//isBc    AtomicBool
-		num int
+		isBc    AtomicBool
+		num     int
 	)
 	var wg sync.WaitGroup
+	keyPresser := NewKeyPresser()
 	for {
 		if !*status {
 			return
 		}
 		num++
 		log.Println("num:", num)
+		if num > 100 {
+			num = 0
+			continue
+		}
 		x, y, w, h := robotgo.GetBounds(robotgo.GetPid())
 		if w == 0 || h == 0 {
 			log.Println("应用基础数据获取异常......")
@@ -106,15 +106,15 @@ func typeKeys(status *bool) {
 		}
 		bit := robotgo.CaptureScreen(int(float64(x)*Scale+float64(w)*Scale/3), int(float64(y)*Scale+float64(h)*Scale)/3*2, int(float64(w)*Scale)/3, int(float64(h)*Scale)/3)
 		bitTop := robotgo.CaptureScreen(int(float64(x)*Scale+float64(w)*Scale/3), 0, int(float64(w)*Scale)/3, int(float64(h)*Scale)/3)
-		if bitTop == nil {
+		if bitTop == nil || bit == nil {
 			log.Println("截图失败，跳过本次循环......")
 			continue
 		}
-		wg.Add(8)
+		allStart := time.Now()
+		wg.Add(9)
 		NewRoutine(func() {
 			defer wg.Done()
 			start := time.Now()
-
 			if bit == nil {
 				log.Println("截图失败，跳过本次循环......")
 				return
@@ -219,6 +219,20 @@ func typeKeys(status *bool) {
 		NewRoutine(func() {
 			defer wg.Done()
 			start := time.Now()
+			bc := robotgo.ImgToCBitmap(B)
+			fx, fy := bitmap.Find(bc, bit, Tolerance)
+			if fx != -1 && fy != -1 {
+				isBc.Set(true)
+				log.Println("检测到背刺")
+			} else {
+				isBc.Set(false)
+			}
+			end := time.Now()
+			log.Printf("背刺检测：%v\n", end.Sub(start))
+		})
+		NewRoutine(func() {
+			defer wg.Done()
+			start := time.Now()
 			bzd := robotgo.ImgToCBitmap(BosZd)
 			fx, fy := bitmap.Find(bzd, bitTop, Tolerance)
 			if fx != -1 && fy != -1 {
@@ -231,94 +245,62 @@ func typeKeys(status *bool) {
 			log.Printf("BOS中毒检测：%v\n", end.Sub(start))
 		})
 		wg.Wait()
+		allEnd := time.Now()
+		log.Printf("检测耗时：%v\n", allEnd.Sub(allStart))
 		if isYs.Get() && !isGl.Get() {
 			robotgo.MilliSleep(BTime)
-			_ = robotgo.KeyTap(robotgo.Key2)
+			keyPresser.KeyTap(robotgo.Key2)
 			log.Println("挂雷成功")
-			isGl.AfterFalse(time.Second * 20)
+			isGl.AfterFalse(time.Second * 10)
 		}
-		//if isYs.Get() {
-		//	isBc.AfterFalse(time.Second * 5)
-		//}
-		//if !isBc.Get() && isYs.Get() {
-		//	robotgo.MilliSleep(BTime)
-		//	_ = robotgo.KeyTap(robotgo.KeyR)
-		//	log.Println("背刺成功")
-		//	isBc.Set(false)
-		//}
 		if !isBosZd.Get() {
 			if isZD.Get() && !isBosZd.Get() {
-				robotgo.MilliSleep(BTime)
-				_ = robotgo.KeyTap(robotgo.Key4)
+				keyPresser.KeyTap(robotgo.Key4)
 				isZD.Set(false)
 				isBosZd.AfterFalse(time.Second * 9)
 				log.Println("掷毒启动ForBit")
 			}
 			if isZL.Get() && !isBosZd.Get() {
-				robotgo.MilliSleep(BTime)
-				_ = robotgo.KeyTap(robotgo.KeyZ)
+				keyPresser.KeyTap(robotgo.KeyZ)
 				isZL.Set(false)
 				isBosZd.AfterFalse(time.Second * 9)
 				log.Println("掷毒雷启动ForBit")
 
 			}
 			if isYB.Get() && !isBosZd.Get() {
-				robotgo.MilliSleep(BTime)
-				_ = robotgo.KeyTap(robotgo.KeyX)
+				keyPresser.KeyTap(robotgo.KeyX)
 				isYB.Set(false)
 				isBosZd.AfterFalse(time.Second * 9)
 				log.Println("影匕启动ForBit")
 			}
 		}
 		if !isYs.Get() && isXY.Get() {
-			_ = robotgo.KeyTap(robotgo.Key1)
-			log.Println("吸影成功")
 			isXY.Set(false)
-			robotgo.MilliSleep(BTime)
-		}
-		if !isYs.Get() && !isXY.Get() && isSc.Get() && !isSS.Get() {
-			isSS.AfterFalse(8 * time.Second)
-			_ = robotgo.KeyTap(robotgo.KeyS)
-			robotgo.MilliSleep(30)
-			_ = robotgo.KeyTap(robotgo.KeyS)
-			robotgo.MilliSleep(50)
-			_ = robotgo.KeyTap(robotgo.Key1)
-			log.Println("SS1执行成功")
-			robotgo.MilliSleep(BTime)
+			keyPresser.KeyTap(robotgo.Key1, 80)
+			log.Println("吸影成功")
+			continue
 		}
 		if isLj.Get() {
-			_ = robotgo.KeyTap(robotgo.Key4)
+			keyPresser.KeyTap(robotgo.Key4, 50)
 			isLj.Set(false)
 			log.Println("雷决启动ForBit")
-			robotgo.MilliSleep(BTime)
+			continue
 		}
 		if isXd.Get() {
-			_ = robotgo.KeyTap(robotgo.KeyX)
+			keyPresser.KeyTap(robotgo.KeyX)
 			isXd.Set(false)
 			log.Println("毒镖启动")
-			robotgo.MilliSleep(BTime)
 		}
-		if isYs.Get() {
-			start := time.Now()
-			fx, fy := bitmap.Find(robotgo.ImgToCBitmap(B), bit, Tolerance)
-			fxx, fyx := bitmap.Find(robotgo.ImgToCBitmap(XY), bit, Tolerance)
-			if fx != -1 && fy != -1 && fxx == -1 && fyx == -1 {
-				_ = robotgo.KeyTap(robotgo.KeyR)
-				isSc.Set(true)
-				log.Println("背刺启动ForBit")
-				robotgo.MilliSleep(BTime)
-			}
-			end := time.Now()
-			log.Printf("背刺检测：%v\n", end.Sub(start))
+		if isYs.Get() && isBc.Get() {
+			keyPresser.KeyTap(robotgo.KeyR, 80)
+			log.Println("背刺启动ForBit")
+			continue
 		}
-		if !isSS.Get() {
-			log.Printf("SS未启动，正常输出:%v\n", num)
-			robotgo.Click("right")
-			robotgo.MilliSleep(BTime)
-			_ = robotgo.KeyTap(F)
-		} else {
-			log.Printf("SS启动，不输出:%v\n", num)
-			isSS.Set(false)
-		}
+		keyPresser.KeyTap(T)
+		keyPresser.KeyTap(F)
+		allEnd = time.Now()
+		log.Printf("单次循环耗时：%v\n", allEnd.Sub(allStart))
+		robotgo.FreeBitmap(bit)
+		robotgo.FreeBitmap(bitTop)
 	}
 }

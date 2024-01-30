@@ -37,7 +37,7 @@ func Find() {
 	}
 	start = time.Now()
 	bitImg := loadImage("./test.png")
-	fx, fy := bitmap.Find(robotgo.ImgToCBitmap(loadImage("./static/Y.png")), robotgo.ImgToCBitmap(bitImg))
+	fx, fy := bitmap.Find(robotgo.ImgToCBitmap(loadImage("./static/B.png")), robotgo.ImgToCBitmap(bitImg))
 	//_ = robotgo.Save(robotgo.ToImage(bit), "test.png")
 	fmt.Println(fx, fy)
 	end = time.Now()
