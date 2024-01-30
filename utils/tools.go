@@ -38,10 +38,8 @@ func getScreenAtCursor() int {
 
 // 一些窗口相关的函数
 var (
-	moduser32                    = syscall.NewLazyDLL("user32.dll")
-	procGetForegroundWindow      = moduser32.NewProc("GetForegroundWindow")
-	procGetWindowThreadProcessId = moduser32.NewProc("GetWindowThreadProcessId")
-	getClassNameW                = moduser32.NewProc("GetClassNameW")
+	user32        = syscall.NewLazyDLL("user32.dll")
+	getClassNameW = user32.NewProc("GetClassNameW")
 )
 
 // GetActiveWindowClassName 获取当前活动窗口的类名
