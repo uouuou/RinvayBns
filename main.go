@@ -21,6 +21,6 @@ func main() {
 		runtime.LockOSThread()
 		utils.Systray()
 	})
-	//utils.Find()
+	utils.Find()
 	utils.NewCheck()
 }
