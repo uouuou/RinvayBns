@@ -161,7 +161,6 @@ func NewCheck() {
 			robotgo.FreeBitmap(bit)
 			end := time.Now()
 			log.Printf("雷决检测测试：%v  %v\n", end.Sub(start), fx != -1 && fy != -1)
-			FindZd()
 		}
 		if ev.Kind == hook.KeyDown && ev.Rawcode == 89 && IsColor {
 			log.Println("Starting Cursor...")

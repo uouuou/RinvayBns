@@ -95,10 +95,6 @@ func typeKeys(status *bool) {
 		}
 		num++
 		log.Println("num:", num)
-		if num > 100 {
-			num = 0
-			continue
-		}
 		x, y, w, h := robotgo.GetBounds(robotgo.GetPid())
 		if w == 0 || h == 0 {
 			log.Println("应用基础数据获取异常......")
@@ -111,7 +107,7 @@ func typeKeys(status *bool) {
 			continue
 		}
 		allStart := time.Now()
-		wg.Add(9)
+		wg.Add(1)
 		NewRoutine(func() {
 			defer wg.Done()
 			start := time.Now()
@@ -129,54 +125,46 @@ func typeKeys(status *bool) {
 			}
 			end := time.Now()
 			log.Printf("雷决检测：%v\n", end.Sub(start))
-		})
-		NewRoutine(func() {
-			defer wg.Done()
-			start := time.Now()
+
+			start = time.Now()
 			yb := robotgo.ImgToCBitmap(YB)
-			fx, fy := bitmap.Find(yb, bit, Tolerance)
+			fx, fy = bitmap.Find(yb, bit, Tolerance)
 			if fx != -1 && fy != -1 {
 				isYB.Set(true)
 				log.Println("可以影匕ForBit")
 			} else {
 				isYB.Set(false)
 			}
-			end := time.Now()
+			end = time.Now()
 			log.Printf("影匕检测：%v\n", end.Sub(start))
-		})
-		NewRoutine(func() {
-			defer wg.Done()
-			start := time.Now()
+
+			start = time.Now()
 			zd := robotgo.ImgToCBitmap(ZD)
-			fx, fy := bitmap.Find(zd, bit, Tolerance)
+			fx, fy = bitmap.Find(zd, bit, Tolerance)
 			if fx != -1 && fy != -1 {
 				isZD.Set(true)
 				log.Println("可以掷毒ForBit")
 			} else {
 				isZD.Set(false)
 			}
-			end := time.Now()
+			end = time.Now()
 			log.Printf("雷决检测：%v\n", end.Sub(start))
-		})
-		NewRoutine(func() {
-			defer wg.Done()
-			start := time.Now()
+
+			start = time.Now()
 			zl := robotgo.ImgToCBitmap(ZL)
-			fx, fy := bitmap.Find(zl, bit, Tolerance)
+			fx, fy = bitmap.Find(zl, bit, Tolerance)
 			if fx != -1 && fy != -1 {
 				isZL.Set(true)
 				log.Println("可以掷毒雷ForBit")
 			} else {
 				isZL.Set(false)
 			}
-			end := time.Now()
+			end = time.Now()
 			log.Printf("掷毒雷检测：%v\n", end.Sub(start))
-		})
-		NewRoutine(func() {
-			defer wg.Done()
-			start := time.Now()
+
+			start = time.Now()
 			ys := robotgo.ImgToCBitmap(YsTime)
-			fx, fy := bitmap.Find(ys, bit, Tolerance)
+			fx, fy = bitmap.Find(ys, bit, Tolerance)
 			if !isYs.Get() && fx != -1 && fy != -1 {
 				isYs.Set(true)
 				log.Println("开始隐身")
@@ -185,63 +173,55 @@ func typeKeys(status *bool) {
 				isYs.Set(false)
 				log.Println("结束隐身")
 			}
-			end := time.Now()
+			end = time.Now()
 			log.Printf("隐身检测：%v\n", end.Sub(start))
-		})
-		NewRoutine(func() {
-			defer wg.Done()
-			start := time.Now()
+
+			start = time.Now()
 			xd := robotgo.ImgToCBitmap(XD)
-			fx, fy := bitmap.Find(xd, bit, Tolerance)
+			fx, fy = bitmap.Find(xd, bit, Tolerance)
 			if fx != -1 && fy != -1 {
 				isXd.Set(true)
 				log.Println("检测到毒镖可使用")
 			} else {
 				isXd.Set(false)
 			}
-			end := time.Now()
+			end = time.Now()
 			log.Printf("毒镖检测：%v\n", end.Sub(start))
-		})
-		NewRoutine(func() {
-			defer wg.Done()
-			start := time.Now()
+
+			start = time.Now()
 			xy := robotgo.ImgToCBitmap(XY)
-			fx, fy := bitmap.Find(xy, bit, Tolerance)
+			fx, fy = bitmap.Find(xy, bit, Tolerance)
 			if fx != -1 && fy != -1 {
 				isXY.Set(true)
 				log.Println("检测到吸影可使用")
 			} else {
 				isXY.Set(false)
 			}
-			end := time.Now()
+			end = time.Now()
 			log.Printf("吸影检测：%v\n", end.Sub(start))
-		})
-		NewRoutine(func() {
-			defer wg.Done()
-			start := time.Now()
+
+			start = time.Now()
 			bc := robotgo.ImgToCBitmap(B)
-			fx, fy := bitmap.Find(bc, bit, Tolerance)
+			fx, fy = bitmap.Find(bc, bit, Tolerance)
 			if fx != -1 && fy != -1 {
 				isBc.Set(true)
 				log.Println("检测到背刺")
 			} else {
 				isBc.Set(false)
 			}
-			end := time.Now()
+			end = time.Now()
 			log.Printf("背刺检测：%v\n", end.Sub(start))
-		})
-		NewRoutine(func() {
-			defer wg.Done()
-			start := time.Now()
+
+			start = time.Now()
 			bzd := robotgo.ImgToCBitmap(BosZd)
-			fx, fy := bitmap.Find(bzd, bitTop, Tolerance)
+			fx, fy = bitmap.Find(bzd, bitTop, Tolerance)
 			if fx != -1 && fy != -1 {
 				isBosZd.Set(true)
 				log.Println("检测到BOS已中毒")
 			} else {
 				isBosZd.Set(false)
 			}
-			end := time.Now()
+			end = time.Now()
 			log.Printf("BOS中毒检测：%v\n", end.Sub(start))
 		})
 		wg.Wait()
