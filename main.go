@@ -1,7 +1,7 @@
 package main
 
 import (
-	"bns/utils"
+	"RinvayBns/utils"
 	"log"
 	"runtime"
 	"time"
@@ -21,6 +21,5 @@ func main() {
 		runtime.LockOSThread()
 		utils.Systray()
 	})
-	//utils.Find()
 	utils.NewCheck()
 }

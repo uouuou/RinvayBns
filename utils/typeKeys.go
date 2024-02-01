@@ -2,7 +2,7 @@ package utils
 
 import (
 	"github.com/go-vgo/robotgo"
-	"github.com/vcaesar/bitmap"
+	"github.com/uouuou/bitmap"
 	"log"
 	"sync"
 	"sync/atomic"
@@ -80,14 +80,15 @@ func typeKeys(status *bool) {
 		isXY    AtomicBool
 		isXd    AtomicBool
 		isBosZd AtomicBool
+		isZdUse AtomicBool
 		isYB    AtomicBool
 		isZD    AtomicBool
 		isZL    AtomicBool
 		isGl    AtomicBool
 		isBc    AtomicBool
+		isSS    AtomicBool
 		num     int
 	)
-	var wg sync.WaitGroup
 	keyPresser := NewKeyPresser()
 	for {
 		if !*status {
@@ -107,163 +108,166 @@ func typeKeys(status *bool) {
 			continue
 		}
 		allStart := time.Now()
-		wg.Add(1)
-		NewRoutine(func() {
-			defer wg.Done()
-			start := time.Now()
-			if bit == nil {
-				log.Println("截图失败，跳过本次循环......")
-				return
-			}
-			l := robotgo.ImgToCBitmap(LJ)
-			fx, fy := bitmap.Find(l, bit, Tolerance)
-			if fx != -1 && fy != -1 {
-				isLj.Set(true)
-				log.Println("雷决启动ForBit")
-			} else {
-				isLj.Set(false)
-			}
-			end := time.Now()
-			log.Printf("雷决检测：%v\n", end.Sub(start))
 
-			start = time.Now()
-			yb := robotgo.ImgToCBitmap(YB)
-			fx, fy = bitmap.Find(yb, bit, Tolerance)
-			if fx != -1 && fy != -1 {
-				isYB.Set(true)
-				log.Println("可以影匕ForBit")
-			} else {
-				isYB.Set(false)
-			}
-			end = time.Now()
-			log.Printf("影匕检测：%v\n", end.Sub(start))
-
-			start = time.Now()
-			zd := robotgo.ImgToCBitmap(ZD)
-			fx, fy = bitmap.Find(zd, bit, Tolerance)
-			if fx != -1 && fy != -1 {
-				isZD.Set(true)
-				log.Println("可以掷毒ForBit")
-			} else {
-				isZD.Set(false)
-			}
-			end = time.Now()
-			log.Printf("雷决检测：%v\n", end.Sub(start))
-
-			start = time.Now()
-			zl := robotgo.ImgToCBitmap(ZL)
-			fx, fy = bitmap.Find(zl, bit, Tolerance)
-			if fx != -1 && fy != -1 {
-				isZL.Set(true)
-				log.Println("可以掷毒雷ForBit")
-			} else {
-				isZL.Set(false)
-			}
-			end = time.Now()
-			log.Printf("掷毒雷检测：%v\n", end.Sub(start))
-
-			start = time.Now()
-			ys := robotgo.ImgToCBitmap(YsTime)
-			fx, fy = bitmap.Find(ys, bit, Tolerance)
-			if !isYs.Get() && fx != -1 && fy != -1 {
-				isYs.Set(true)
-				log.Println("开始隐身")
-			}
-			if isYs.Get() && fx == -1 && fy == -1 {
-				isYs.Set(false)
-				log.Println("结束隐身")
-			}
-			end = time.Now()
-			log.Printf("隐身检测：%v\n", end.Sub(start))
-
-			start = time.Now()
-			xd := robotgo.ImgToCBitmap(XD)
-			fx, fy = bitmap.Find(xd, bit, Tolerance)
-			if fx != -1 && fy != -1 {
-				isXd.Set(true)
-				log.Println("检测到毒镖可使用")
-			} else {
-				isXd.Set(false)
-			}
-			end = time.Now()
-			log.Printf("毒镖检测：%v\n", end.Sub(start))
-
-			start = time.Now()
-			xy := robotgo.ImgToCBitmap(XY)
-			fx, fy = bitmap.Find(xy, bit, Tolerance)
-			if fx != -1 && fy != -1 {
-				isXY.Set(true)
-				log.Println("检测到吸影可使用")
-			} else {
-				isXY.Set(false)
-			}
-			end = time.Now()
-			log.Printf("吸影检测：%v\n", end.Sub(start))
-
-			start = time.Now()
-			bc := robotgo.ImgToCBitmap(B)
-			fx, fy = bitmap.Find(bc, bit, Tolerance)
-			if fx != -1 && fy != -1 {
-				isBc.Set(true)
-				log.Println("检测到背刺")
-			} else {
-				isBc.Set(false)
-			}
-			end = time.Now()
-			log.Printf("背刺检测：%v\n", end.Sub(start))
-
-			start = time.Now()
-			bzd := robotgo.ImgToCBitmap(BosZd)
-			fx, fy = bitmap.Find(bzd, bitTop, Tolerance)
-			if fx != -1 && fy != -1 {
-				isBosZd.Set(true)
-				log.Println("检测到BOS已中毒")
-			} else {
-				isBosZd.Set(false)
-			}
-			end = time.Now()
-			log.Printf("BOS中毒检测：%v\n", end.Sub(start))
-		})
-		wg.Wait()
+		// 检测是否可以雷决
+		start := time.Now()
+		if bit == nil {
+			log.Println("截图失败，跳过本次循环......")
+			return
+		}
+		l := robotgo.ImgToCBitmap(LJ)
+		fx, fy := bitmap.Find(l, bit, Tolerance)
+		if fx != -1 && fy != -1 {
+			isLj.Set(true)
+			log.Println("雷决启动ForBit")
+		} else {
+			isLj.Set(false)
+		}
+		end := time.Now()
+		log.Printf("雷决检测：%v\n", end.Sub(start))
+		// 检测是否可以使用影匕
+		start = time.Now()
+		yb := robotgo.ImgToCBitmap(YB)
+		fx, fy = bitmap.Find(yb, bit, Tolerance)
+		if fx != -1 && fy != -1 {
+			isYB.Set(true)
+			log.Println("可以影匕ForBit")
+		} else {
+			isYB.Set(false)
+		}
+		end = time.Now()
+		log.Printf("影匕检测：%v\n", end.Sub(start))
+		// 检测是否可以掷毒
+		start = time.Now()
+		zd := robotgo.ImgToCBitmap(ZD)
+		fx, fy = bitmap.Find(zd, bit, Tolerance)
+		if fx != -1 && fy != -1 {
+			isZD.Set(true)
+			log.Println("可以掷毒ForBit")
+		} else {
+			isZD.Set(false)
+		}
+		end = time.Now()
+		log.Printf("掷毒检测：%v\n", end.Sub(start))
+		// 检测是否可以掷毒雷
+		start = time.Now()
+		zl := robotgo.ImgToCBitmap(ZL)
+		fx, fy = bitmap.Find(zl, bit, Tolerance)
+		if fx != -1 && fy != -1 {
+			isZL.Set(true)
+			log.Println("可以掷毒雷ForBit")
+		} else {
+			isZL.Set(false)
+		}
+		end = time.Now()
+		log.Printf("掷毒雷检测：%v\n", end.Sub(start))
+		// 检测是否可以隐身
+		start = time.Now()
+		ys := robotgo.ImgToCBitmap(YsTime)
+		fx, fy = bitmap.Find(ys, bit, Tolerance)
+		if !isYs.Get() && fx != -1 && fy != -1 {
+			isYs.Set(true)
+			log.Println("开始隐身")
+		}
+		if isYs.Get() && fx == -1 && fy == -1 {
+			isYs.Set(false)
+			log.Println("结束隐身")
+		}
+		end = time.Now()
+		log.Printf("隐身检测：%v\n", end.Sub(start))
+		// 检测是否可以吸影
+		start = time.Now()
+		xy := robotgo.ImgToCBitmap(XY)
+		fx, fy = bitmap.Find(xy, bit, Tolerance)
+		if fx != -1 && fy != -1 {
+			isXY.Set(true)
+			log.Println("检测到吸影可使用")
+		} else {
+			isXY.Set(false)
+		}
+		end = time.Now()
+		log.Printf("吸影检测：%v\n", end.Sub(start))
+		// 检测是否可以背刺
+		start = time.Now()
+		bc := robotgo.ImgToCBitmap(B)
+		fx, fy = bitmap.Find(bc, bit, Tolerance)
+		if fx != -1 && fy != -1 {
+			isBc.Set(true)
+			log.Println("检测到背刺")
+		} else {
+			isBc.Set(false)
+		}
+		end = time.Now()
+		log.Printf("背刺检测：%v\n", end.Sub(start))
+		// 检测是否已中毒
+		start = time.Now()
+		bzd := robotgo.ImgToCBitmap(BosZd)
+		fx, fy = bitmap.Find(bzd, bitTop, Tolerance)
+		if fx != -1 && fy != -1 {
+			isBosZd.Set(true)
+			log.Println("检测到BOS已中毒")
+		} else {
+			isBosZd.Set(false)
+		}
+		end = time.Now()
+		log.Printf("BOS中毒检测：%v\n", end.Sub(start))
 		allEnd := time.Now()
 		log.Printf("检测耗时：%v\n", allEnd.Sub(allStart))
 		if isYs.Get() && !isGl.Get() {
 			robotgo.MilliSleep(BTime)
 			keyPresser.KeyTap(robotgo.Key2)
 			log.Println("挂雷成功")
-			isGl.AfterFalse(time.Second * 10)
+			isGl.AfterFalse(time.Second * 5)
 		}
 		if !isBosZd.Get() {
-			if isZD.Get() && !isBosZd.Get() {
+			if isZdUse.Get() {
+				isZdUse.Set(false)
+			}
+			if isZD.Get() && !isZdUse.Get() {
 				keyPresser.KeyTap(robotgo.Key4)
 				isZD.Set(false)
-				isBosZd.AfterFalse(time.Second * 9)
+				isZdUse.AfterFalse(time.Second * 9)
 				log.Println("掷毒启动ForBit")
 			}
-			if isZL.Get() && !isBosZd.Get() {
+			if isZL.Get() && !isZdUse.Get() {
 				keyPresser.KeyTap(robotgo.KeyZ)
 				isZL.Set(false)
-				isBosZd.AfterFalse(time.Second * 9)
+				isZdUse.AfterFalse(time.Second * 9)
 				log.Println("掷毒雷启动ForBit")
 
 			}
-			if isYB.Get() && !isBosZd.Get() {
+			if isYB.Get() && !isZdUse.Get() {
 				keyPresser.KeyTap(robotgo.KeyX)
 				isYB.Set(false)
-				isBosZd.AfterFalse(time.Second * 9)
+				isZdUse.AfterFalse(time.Second * 9)
 				log.Println("影匕启动ForBit")
 			}
 		}
 		if !isYs.Get() && isXY.Get() {
-			isXY.Set(false)
+			isXY.AfterFalse(50)
 			keyPresser.KeyTap(robotgo.Key1, 80)
 			log.Println("吸影成功")
+			isXY.Set(false)
+			robotgo.MilliSleep(BTime)
+			printTime(allStart)
+			continue
+		}
+		if !isYs.Get() && !isXY.Get() && !isSS.Get() {
+			isSS.AfterFalse(50)
+			_ = robotgo.KeyTap(robotgo.KeyS)
+			robotgo.MilliSleep(15)
+			_ = robotgo.KeyTap(robotgo.KeyS)
+			_ = robotgo.KeyTap(robotgo.Key1)
+			log.Println("SS1执行成功")
+			printTime(allStart)
 			continue
 		}
 		if isLj.Get() {
 			keyPresser.KeyTap(robotgo.Key4, 50)
 			isLj.Set(false)
 			log.Println("雷决启动ForBit")
+			robotgo.MilliSleep(BTime)
+			printTime(allStart)
 			continue
 		}
 		if isXd.Get() {
@@ -271,16 +275,27 @@ func typeKeys(status *bool) {
 			isXd.Set(false)
 			log.Println("毒镖启动")
 		}
-		if isYs.Get() && isBc.Get() {
+		if isYs.Get() && isBc.Get() && !isXY.Get() {
 			keyPresser.KeyTap(robotgo.KeyR, 80)
 			log.Println("背刺启动ForBit")
+			robotgo.MilliSleep(BTime)
+			printTime(allStart)
 			continue
 		}
-		keyPresser.KeyTap(T)
-		keyPresser.KeyTap(F)
-		allEnd = time.Now()
-		log.Printf("单次循环耗时：%v\n", allEnd.Sub(allStart))
+		if !isSS.Get() {
+			keyPresser.KeyTap(T)
+			keyPresser.KeyTap(F)
+		}
+		//销毁数据
 		robotgo.FreeBitmap(bit)
 		robotgo.FreeBitmap(bitTop)
+		printTime(allStart)
 	}
+}
+
+// printTime 打印耗时
+func printTime(allStart time.Time) {
+	allEnd := time.Now()
+	log.Printf("单次循环耗时：%v\n", allEnd.Sub(allStart))
+	log.Println("----------------------")
 }

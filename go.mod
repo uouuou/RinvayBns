@@ -1,14 +1,12 @@
-module bns
+module RinvayBns
 
-go 1.22rc2
+go 1.20
 
 require (
-	github.com/deluan/lookup v0.0.7
 	github.com/energye/systray v1.0.2
 	github.com/go-vgo/robotgo v1.0.0-rc2.1
-	github.com/redzl/go-dmsoft v1.0.3
 	github.com/robotn/gohook v0.41.0
-	github.com/vcaesar/bitmap v0.10.0-beta3.2
+	github.com/uouuou/bitmap v0.10.0-beta3.7
 	golang.org/x/sys v0.16.0
 	gopkg.in/ini.v1 v1.67.0
 )
@@ -25,7 +23,7 @@ require (
 	github.com/power-devops/perfstat v0.0.0-20221212215047-62379fc7944b // indirect
 	github.com/robotn/xgb v0.0.0-20190912153532-2cb92d044934 // indirect
 	github.com/robotn/xgbutil v0.0.0-20190912154524-c861d6f87770 // indirect
-	github.com/shirou/gopsutil/v3 v3.23.12 // indirect
+	github.com/shirou/gopsutil/v3 v3.24.1 // indirect
 	github.com/shoenig/go-m1cpu v0.1.6 // indirect
 	github.com/tevino/abool v0.0.0-20220530134649-2bfc934cb23c // indirect
 	github.com/tklauser/go-sysconf v0.3.13 // indirect

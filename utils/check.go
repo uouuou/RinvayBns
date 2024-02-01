@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/go-vgo/robotgo"
 	hook "github.com/robotn/gohook"
-	"github.com/vcaesar/bitmap"
+	"github.com/uouuou/bitmap"
 	"image"
 	"log"
 	"os"
@@ -16,7 +16,6 @@ import (
 var LJ image.Image     //雷决
 var YsTime image.Image //隐身条
 var B image.Image      //背刺
-var XD image.Image     //毒镖
 var XY image.Image     //吸影
 var YB image.Image     //影匕
 var ZD image.Image     //掷毒
@@ -27,7 +26,6 @@ var BosZd image.Image  //BOS中毒
 func init() {
 	B = loadImage("./static/B.png")
 	LJ = loadImage("./static/L.png")
-	XD = loadImage("./static/XD.png")
 	YsTime = loadImage("./static/Y.png")
 	XY = loadImage("./static/XY.png")
 	YB = loadImage("./static/YB.png")
