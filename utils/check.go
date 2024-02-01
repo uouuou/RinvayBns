@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/go-vgo/robotgo"
 	hook "github.com/robotn/gohook"
-	"github.com/uouuou/bitmap"
+	"github.com/vcaesar/bitmap"
 	"image"
 	"log"
 	"os"

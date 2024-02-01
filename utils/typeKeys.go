@@ -2,7 +2,7 @@ package utils
 
 import (
 	"github.com/go-vgo/robotgo"
-	"github.com/uouuou/bitmap"
+	"github.com/vcaesar/bitmap"
 	"log"
 	"sync"
 	"sync/atomic"

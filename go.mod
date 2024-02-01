@@ -6,7 +6,7 @@ require (
 	github.com/energye/systray v1.0.2
 	github.com/go-vgo/robotgo v1.0.0-rc2.1
 	github.com/robotn/gohook v0.41.0
-	github.com/uouuou/bitmap v0.10.0-beta3.7
+	github.com/vcaesar/bitmap v0.10.0-beta3.2
 	golang.org/x/sys v0.16.0
 	gopkg.in/ini.v1 v1.67.0
 )
