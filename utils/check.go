@@ -20,7 +20,7 @@ var XY image.Image     //吸影
 var YB image.Image     //影匕
 var ZD image.Image     //掷毒
 var ZL image.Image     //掷毒雷
-var BosZd image.Image  //BOS中毒
+var CDBS image.Image   //淬毒匕首
 
 // init 初始化取色图片
 func init() {
@@ -31,7 +31,7 @@ func init() {
 	YB = loadImage("./static/YB.png")
 	ZD = loadImage("./static/ZD.png")
 	ZL = loadImage("./static/ZL.png")
-	BosZd = loadImage("./static/BosZd.png")
+	CDBS = loadImage("./static/CDBS.png")
 }
 
 // loadImage 读取图片
@@ -151,14 +151,14 @@ func NewCheck() {
 				log.Println("LJ is nil")
 				continue
 			}
-			fx, fy := bitmap.Find(robotgo.ImgToCBitmap(LJ), bit)
+			fx, fy := bitmap.Find(robotgo.ImgToCBitmap(YB), bit)
 			if fx != -1 && fy != -1 {
 				_ = robotgo.KeyTap(robotgo.Key4)
 			}
 			_ = robotgo.Save(robotgo.ToImage(bit), "test.png")
 			robotgo.FreeBitmap(bit)
 			end := time.Now()
-			log.Printf("雷决检测测试：%v  %v\n", end.Sub(start), fx != -1 && fy != -1)
+			log.Printf("检测测试：%v  %v\n", end.Sub(start), fx != -1 && fy != -1)
 		}
 		if ev.Kind == hook.KeyDown && ev.Rawcode == 89 && IsColor {
 			log.Println("Starting Cursor...")

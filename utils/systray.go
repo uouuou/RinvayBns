@@ -50,19 +50,20 @@ func onReady() {
 	systray.AddMenuItem("使用说明", "使用说明").Click(func() {
 		ShowMessage("使用说明", "")
 	})
-	color := systray.AddMenuItem("开启取色", "开启取色")
-	color.Click(func() {
+	ysColor := systray.AddMenuItem("隐身取色", "隐身取色")
+	ysColor.Click(func() {
 		if !IsColor {
-			ShowMessage("取图测试", "开启取色后鼠标移动到需要取的位置按下键盘Y键即可将颜色和XY坐标信息写入配置文件")
-			color.SetTitle("关闭取图")
-			color.SetTooltip("关闭取图")
+			ShowMessage("隐身取色", "开启取色后鼠标移动到需要取的位置按下键盘Y键即可将颜色和XY坐标信息写入配置文件")
+			ysColor.SetTitle("关闭取图")
+			ysColor.SetTooltip("关闭取图")
 			IsColor = true
 		} else {
-			color.SetTitle("取图测试")
-			color.SetTooltip("取图测试")
+			ysColor.SetTitle("取图测试")
+			ysColor.SetTooltip("取图测试")
 			IsColor = false
 		}
 	})
+
 	CheckKey := systray.AddMenuItem("按键打印", "按键打印")
 	CheckKey.Click(func() {
 		if !IsCheckKey {

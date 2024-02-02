@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"context"
 	"github.com/go-vgo/robotgo"
 	"github.com/vcaesar/bitmap"
 	"log"
@@ -35,7 +36,8 @@ func (k *KeyPresser) KeyTap(key string, sleep ...int) {
 
 // AtomicBool 原子布尔值
 type AtomicBool struct {
-	val int32
+	val        int32
+	cancelFunc context.CancelFunc
 }
 
 func (b *AtomicBool) Set(value bool) {
@@ -54,10 +56,23 @@ func (b *AtomicBool) Get() bool {
 func (b *AtomicBool) AfterFalse(duration time.Duration) {
 	b.Set(true)
 
-	// 计时器到期后自动将 AtomicBool 的值重置为 false
-	time.AfterFunc(duration, func() {
-		b.Set(false)
-	})
+	// 如果已经有一个定时器在运行，取消它
+	if b.cancelFunc != nil {
+		b.cancelFunc()
+	}
+
+	ctx, cancel := context.WithCancel(context.Background())
+	b.cancelFunc = cancel
+
+	go func() {
+		select {
+		case <-time.After(duration):
+			b.Set(false)
+		case <-ctx.Done():
+			// 如果收到取消信号，不做任何事情
+			return
+		}
+	}()
 }
 
 // typeKeys 模拟键盘输入
@@ -75,22 +90,22 @@ func typeKeys(status *bool) {
 	}
 	// 一些运行参数信息
 	var (
-		isLj    AtomicBool
-		isYs    AtomicBool
-		isXY    AtomicBool
-		isXd    AtomicBool
-		isBosZd AtomicBool
-		isZdUse AtomicBool
-		isYB    AtomicBool
-		isZD    AtomicBool
-		isZL    AtomicBool
-		isGl    AtomicBool
-		isBc    AtomicBool
-		isSS    AtomicBool
-		num     int
+		isLj          AtomicBool
+		isYs          AtomicBool
+		isXY          AtomicBool
+		isCuiDuBiShou AtomicBool
+		isYB          AtomicBool
+		isZD          AtomicBool
+		isZL          AtomicBool
+		isGl          AtomicBool
+		isBc          AtomicBool
+		isSS          AtomicBool
+		num           int
 	)
 	keyPresser := NewKeyPresser()
 	for {
+		var start, end time.Time
+		var fx, fy int
 		if !*status {
 			return
 		}
@@ -108,22 +123,30 @@ func typeKeys(status *bool) {
 			continue
 		}
 		allStart := time.Now()
-
-		// 检测是否可以雷决
-		start := time.Now()
-		if bit == nil {
-			log.Println("截图失败，跳过本次循环......")
-			return
+		// 检测是否可以隐身
+		start = time.Now()
+		ys := robotgo.ImgToCBitmap(YsTime)
+		fx, fy = bitmap.Find(ys, bit, Tolerance)
+		if fx != -1 && fy != -1 {
+			isYs.Set(true)
+			log.Println("正在隐身中")
+		} else {
+			isYs.Set(false)
+			log.Println("结束隐身")
 		}
+		end = time.Now()
+		log.Printf("隐身检测：%v\n", end.Sub(start))
+		// 检测是否可以雷决
+		start = time.Now()
 		l := robotgo.ImgToCBitmap(LJ)
-		fx, fy := bitmap.Find(l, bit, Tolerance)
+		fx, fy = bitmap.Find(l, bit, Tolerance)
 		if fx != -1 && fy != -1 {
 			isLj.Set(true)
 			log.Println("雷决启动ForBit")
 		} else {
 			isLj.Set(false)
 		}
-		end := time.Now()
+		end = time.Now()
 		log.Printf("雷决检测：%v\n", end.Sub(start))
 		// 检测是否可以使用影匕
 		start = time.Now()
@@ -161,20 +184,18 @@ func typeKeys(status *bool) {
 		}
 		end = time.Now()
 		log.Printf("掷毒雷检测：%v\n", end.Sub(start))
-		// 检测是否可以隐身
+		// 检测是否可以淬毒匕首
 		start = time.Now()
-		ys := robotgo.ImgToCBitmap(YsTime)
-		fx, fy = bitmap.Find(ys, bit, Tolerance)
-		if !isYs.Get() && fx != -1 && fy != -1 {
-			isYs.Set(true)
-			log.Println("开始隐身")
-		}
-		if isYs.Get() && fx == -1 && fy == -1 {
-			isYs.Set(false)
-			log.Println("结束隐身")
+		cdbs := robotgo.ImgToCBitmap(CDBS)
+		fx, fy = bitmap.Find(cdbs, bit, Tolerance)
+		if fx != -1 && fy != -1 {
+			isCuiDuBiShou.Set(true)
+			log.Println("可以淬毒匕首ForBit")
+		} else {
+			isCuiDuBiShou.Set(false)
 		}
 		end = time.Now()
-		log.Printf("隐身检测：%v\n", end.Sub(start))
+		log.Printf("淬毒匕首检测：%v\n", end.Sub(start))
 		// 检测是否可以吸影
 		start = time.Now()
 		xy := robotgo.ImgToCBitmap(XY)
@@ -199,18 +220,6 @@ func typeKeys(status *bool) {
 		}
 		end = time.Now()
 		log.Printf("背刺检测：%v\n", end.Sub(start))
-		// 检测是否已中毒
-		start = time.Now()
-		bzd := robotgo.ImgToCBitmap(BosZd)
-		fx, fy = bitmap.Find(bzd, bitTop, Tolerance)
-		if fx != -1 && fy != -1 {
-			isBosZd.Set(true)
-			log.Println("检测到BOS已中毒")
-		} else {
-			isBosZd.Set(false)
-		}
-		end = time.Now()
-		log.Printf("BOS中毒检测：%v\n", end.Sub(start))
 		allEnd := time.Now()
 		log.Printf("检测耗时：%v\n", allEnd.Sub(allStart))
 		if isYs.Get() && !isGl.Get() {
@@ -219,46 +228,48 @@ func typeKeys(status *bool) {
 			log.Println("挂雷成功")
 			isGl.AfterFalse(time.Second * 5)
 		}
-		if !isBosZd.Get() {
-			if isZdUse.Get() {
-				isZdUse.Set(false)
-			}
-			if isZD.Get() && !isZdUse.Get() {
-				keyPresser.KeyTap(robotgo.Key4)
-				isZD.Set(false)
-				isZdUse.AfterFalse(time.Second * 9)
-				log.Println("掷毒启动ForBit")
-			}
-			if isZL.Get() && !isZdUse.Get() {
-				keyPresser.KeyTap(robotgo.KeyZ)
-				isZL.Set(false)
-				isZdUse.AfterFalse(time.Second * 9)
+		if isYs.Get() {
+			if isZL.Get() {
+				keyPresser.KeyTap(robotgo.KeyZ, 60)
 				log.Println("掷毒雷启动ForBit")
-
-			}
-			if isYB.Get() && !isZdUse.Get() {
-				keyPresser.KeyTap(robotgo.KeyX)
-				isYB.Set(false)
-				isZdUse.AfterFalse(time.Second * 9)
-				log.Println("影匕启动ForBit")
+				printTime(allStart)
+				continue
+			} else {
+				if isYB.Get() {
+					keyPresser.KeyTap(robotgo.KeyX, 80)
+					log.Println("影匕启动ForBit")
+					printTime(allStart)
+					continue
+				}
 			}
 		}
+		if isZD.Get() {
+			keyPresser.KeyTap(robotgo.Key4)
+			isZD.Set(false)
+			log.Println("掷毒启动ForBit")
+		}
+		log.Println("隐身状态", isYs.Get(), "影匕状态：", isYB.Get(), "吸影状态：", isXY.Get(), "背刺状态：", isBc.Get(), "SS状态：", isSS.Get(), "掷毒状态：", isZD.Get(), "掷毒雷状态：", isZL.Get(), "淬毒匕首状态：", isCuiDuBiShou.Get(), "雷决状态：", isLj.Get())
 		if !isYs.Get() && isXY.Get() {
-			isXY.AfterFalse(50)
+			isXY.AfterFalse(time.Millisecond * 200)
 			keyPresser.KeyTap(robotgo.Key1, 80)
 			log.Println("吸影成功")
-			isXY.Set(false)
 			robotgo.MilliSleep(BTime)
 			printTime(allStart)
 			continue
 		}
 		if !isYs.Get() && !isXY.Get() && !isSS.Get() {
-			isSS.AfterFalse(50)
-			_ = robotgo.KeyTap(robotgo.KeyS)
-			robotgo.MilliSleep(15)
-			_ = robotgo.KeyTap(robotgo.KeyS)
-			_ = robotgo.KeyTap(robotgo.Key1)
-			log.Println("SS1执行成功")
+			log.Printf("SS执行前：%v\n", isSS.Get())
+			isSS.AfterFalse(time.Millisecond * 500)
+			keyPresser.KeyTap(robotgo.KeyS, 30)
+			robotgo.MilliSleep(90)
+			keyPresser.KeyTap(robotgo.KeyS, 30)
+			log.Println("SS执行成功")
+			printTime(allStart)
+			continue
+		}
+		if isSS.Get() && !isYs.Get() && !isXY.Get() {
+			keyPresser.KeyTap(robotgo.Key1, 80)
+			log.Println("SS后潜行执行成功")
 			printTime(allStart)
 			continue
 		}
@@ -270,10 +281,12 @@ func typeKeys(status *bool) {
 			printTime(allStart)
 			continue
 		}
-		if isXd.Get() {
+		if isCuiDuBiShou.Get() {
 			keyPresser.KeyTap(robotgo.KeyX)
-			isXd.Set(false)
-			log.Println("毒镖启动")
+			isCuiDuBiShou.Set(false)
+			log.Println("淬毒匕首启动")
+			printTime(allStart)
+			continue
 		}
 		if isYs.Get() && isBc.Get() && !isXY.Get() {
 			keyPresser.KeyTap(robotgo.KeyR, 80)
@@ -282,10 +295,8 @@ func typeKeys(status *bool) {
 			printTime(allStart)
 			continue
 		}
-		if !isSS.Get() {
-			keyPresser.KeyTap(T)
-			keyPresser.KeyTap(F)
-		}
+		keyPresser.KeyTap(T)
+		keyPresser.KeyTap(F)
 		//销毁数据
 		robotgo.FreeBitmap(bit)
 		robotgo.FreeBitmap(bitTop)
