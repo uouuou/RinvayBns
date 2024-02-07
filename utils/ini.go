@@ -17,6 +17,7 @@ var IsColor bool      //是否开启取色
 var IsCheckKey bool   //是否开启检测按键
 var Tolerance float64 //容差值
 var Scale float64     //缩放值
+var Dlj bool          //是否开启单独雷决
 
 // ReadIni 读取配置文件
 func ReadIni() {
@@ -31,6 +32,7 @@ func ReadIni() {
 	BTime, _ = cfg.Section("系统设置").Key("按键延时").Int()
 	T = cfg.Section("系统设置").Key("刺心按键").String()
 	F = cfg.Section("系统设置").Key("雷电杀按键").String()
+	Dlj = cfg.Section("系统设置").Key("单雷决").MustBool(false)
 	if Tolerance == 0 {
 		Tolerance = 0.08
 	}

@@ -13,26 +13,18 @@ import (
 	"time"
 )
 
-var LJ image.Image     //雷决
-var YsTime image.Image //隐身条
-var B image.Image      //背刺
-var XY image.Image     //吸影
-var YB image.Image     //影匕
-var ZD image.Image     //掷毒
-var ZL image.Image     //掷毒雷
-var CDBS image.Image   //淬毒匕首
-
-// init 初始化取色图片
-func init() {
-	B = loadImage("./static/B.png")
-	LJ = loadImage("./static/L.png")
-	YsTime = loadImage("./static/Y.png")
-	XY = loadImage("./static/XY.png")
-	YB = loadImage("./static/YB.png")
-	ZD = loadImage("./static/ZD.png")
-	ZL = loadImage("./static/ZL.png")
-	CDBS = loadImage("./static/CDBS.png")
-}
+const (
+	BC     = "./static/B.png"
+	LJ     = "./static/L.png"
+	YsTime = "./static/Y.png"
+	XY     = "./static/XY.png"
+	YB     = "./static/YB.png"
+	ZD     = "./static/ZD.png"
+	ZL     = "./static/ZL.png"
+	CDBS   = "./static/CDBS.png"
+	BosZd  = "./static/BosZd.png"
+	BosZdR = "./static/BosZdR.png"
+)
 
 // loadImage 读取图片
 func loadImage(imgPath string) image.Image {
@@ -147,11 +139,7 @@ func NewCheck() {
 			//	continue
 			//}
 			fmt.Println(bit)
-			if LJ == nil {
-				log.Println("LJ is nil")
-				continue
-			}
-			fx, fy := bitmap.Find(robotgo.ImgToCBitmap(YB), bit)
+			fx, fy := bitmap.FindPic(LJ, bit)
 			if fx != -1 && fy != -1 {
 				_ = robotgo.KeyTap(robotgo.Key4)
 			}
