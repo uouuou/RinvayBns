@@ -131,7 +131,7 @@ func typeKeys(status *bool) {
 			continue
 		}
 		wg := sync.WaitGroup{}
-		wg.Add(10)
+		wg.Add(9)
 		allStart := time.Now()
 		// 检测是否可以隐身
 		NewRoutine(func() {
@@ -152,23 +152,9 @@ func typeKeys(status *bool) {
 		NewRoutine(func() {
 			defer wg.Done()
 			start = time.Now()
-			fx, fy = bitmap.FindPic(BosZd, bitTop, Tolerance)
-			if fx != -1 && fy != -1 {
-				isBosZd.Set(true)
-				log.Println("BOS已中毒")
-			} else {
-				isBosZd.Set(false)
-				log.Println("BOS未中毒")
-			}
-			end = time.Now()
-			log.Printf("中毒检测：%v\n", end.Sub(start))
-		})
-		// 检测BOS是否中毒
-		NewRoutine(func() {
-			defer wg.Done()
-			start = time.Now()
 			fxr, fyr := bitmap.FindPic(BosZdR, bitTop, Tolerance)
-			if fxr != -1 && fyr != -1 {
+			fx, fy = bitmap.FindPic(BosZd, bitTop, Tolerance)
+			if (fx != -1 && fy != -1) || (fxr != -1 && fyr != -1) {
 				isBosZd.Set(true)
 				log.Println("BOS已中毒")
 			} else {
@@ -316,7 +302,7 @@ func typeKeys(status *bool) {
 			printTime(allStart)
 			continue
 		}
-		if !isYs.Get() && !isXY.Get() && !isSS.Get() && !Dlj {
+		if !isYs.Get() && !isXY.Get() && !isSS.Get() && !Dlj && !isBosZd.Get() {
 			log.Printf("SS执行前：%v\n", isSS.Get())
 			isSS.AfterFalse(time.Millisecond * 300)
 			keyPresser.KeyTap(robotgo.KeyS, 30)
