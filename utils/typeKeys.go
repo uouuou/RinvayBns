@@ -302,7 +302,7 @@ func typeKeys(status *bool) {
 			printTime(allStart)
 			continue
 		}
-		if !isYs.Get() && !isXY.Get() && !isSS.Get() && !Dlj && !isBosZd.Get() {
+		if !isYs.Get() && !isXY.Get() && !isSS.Get() && !Dlj {
 			log.Printf("SS执行前：%v\n", isSS.Get())
 			isSS.AfterFalse(time.Millisecond * 300)
 			keyPresser.KeyTap(robotgo.KeyS, 30)
